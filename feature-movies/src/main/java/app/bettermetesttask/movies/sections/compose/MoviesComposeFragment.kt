@@ -74,7 +74,7 @@ class MoviesComposeFragment : Fragment(), Injectable {
                 MoviesComposeScreen(viewState, likeMovie = { movie ->
                     viewModel.likeMovie(movie)
                 }, viewLoaded = {
-                    viewModel.loadMovies()
+//                    viewModel.loadMovies()
                 })
             }
         }

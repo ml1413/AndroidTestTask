@@ -8,8 +8,10 @@ import app.bettermetesttask.domainmovies.interactors.AddMovieToFavoritesUseCase
 import app.bettermetesttask.domainmovies.interactors.ObserveMoviesUseCase
 import app.bettermetesttask.domainmovies.interactors.RemoveMovieFromFavoritesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,15 +23,14 @@ class MoviesViewModel @Inject constructor(
     ) : ViewModel() {
 
     private val moviesMutableFlow: MutableStateFlow<MoviesState> =
-        MutableStateFlow(MoviesState.Initial)
+        MutableStateFlow(MoviesState.Loading)
 
-    val moviesStateFlow: StateFlow<MoviesState>
-        get() = moviesMutableFlow.asStateFlow()
-    init { loadMovies() }
+    val moviesStateFlow: StateFlow<MoviesState> = moviesMutableFlow
+        .onSubscription { loadMovies() }
+        .stateIn(viewModelScope, SharingStarted.Lazily, MoviesState.Loading)
 
-    fun loadMovies() {
+    private fun loadMovies() {
         viewModelScope.launch {
-            moviesMutableFlow.emit(MoviesState.Loading)
             observeMoviesUseCase()
                 .collect { result ->
                     if (result is Result.Success) {
