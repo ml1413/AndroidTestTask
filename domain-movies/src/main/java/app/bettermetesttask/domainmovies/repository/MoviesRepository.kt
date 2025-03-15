@@ -15,4 +15,5 @@ interface MoviesRepository {
     suspend fun addMovieToFavorites(movieId: Int)
 
     suspend fun removeMovieFromFavorites(movieId: Int)
+    suspend fun getLocalMovies():Result<List<Movie>>
 }

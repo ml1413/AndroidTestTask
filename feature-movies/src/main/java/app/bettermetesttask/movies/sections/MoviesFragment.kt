@@ -1,7 +1,6 @@
 package app.bettermetesttask.movies.sections
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,6 +61,9 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
         adapter.onItemLiked = { movie ->
             viewModel.likeMovie(movie)
         }
+        binding.btGetLocal.setOnClickListener {
+            viewModel.getLocalMovies()
+        }
     }
 
     private fun renderMoviesState(state: MoviesState) {
@@ -69,22 +71,23 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
             when (state) {
                 MoviesState.Loading -> {
                     rvList.gone()
+                    llError.gone()
                     progressBar.visible()
                 }
 
                 is MoviesState.Loaded -> {
+                    llError.gone()
                     progressBar.gone()
                     rvList.visible()
                     adapter.apply {
                         rvList.adapter = this
-                        submitList(state.movies)
+                        submitList(state.movies)// need diff util
                     }
                 }
 
                 is MoviesState.Error -> {
-                    // no op
                     tvError.text = state.error
-                    tvError.visible()
+                    llError.visible()
                     progressBar.gone()
                     rvList.gone()
                 }

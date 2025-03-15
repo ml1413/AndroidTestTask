@@ -18,6 +18,10 @@ class MoviesRepositoryImpl @Inject constructor(
         return Result.of { restStore.getMovies() }
     }
 
+    override suspend fun getLocalMovies(): Result<List<Movie>> {
+        return Result.of { localStore.getMovies().map { mapper.mapFromLocal(it) } }
+    }
+
     override suspend fun getMovie(id: Int): Result<Movie> {
         return Result.of { mapper.mapFromLocal(localStore.getMovie(id)) }
     }

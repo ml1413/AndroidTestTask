@@ -1,10 +1,12 @@
 package app.bettermetesttask.movies.sections
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.bettermetesttask.domaincore.utils.Result
 import app.bettermetesttask.domainmovies.entries.Movie
 import app.bettermetesttask.domainmovies.interactors.AddMovieToFavoritesUseCase
+import app.bettermetesttask.domainmovies.interactors.GetLocalUseCase
 import app.bettermetesttask.domainmovies.interactors.ObserveMoviesUseCase
 import app.bettermetesttask.domainmovies.interactors.RemoveMovieFromFavoritesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +21,9 @@ class MoviesViewModel @Inject constructor(
     private val observeMoviesUseCase: ObserveMoviesUseCase,
     private val likeMovieUseCase: AddMovieToFavoritesUseCase,
     private val dislikeMovieUseCase: RemoveMovieFromFavoritesUseCase,
+    private val getLocalUseCase: GetLocalUseCase
 
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val moviesMutableFlow: MutableStateFlow<MoviesState> =
         MutableStateFlow(MoviesState.Loading)
@@ -50,6 +53,13 @@ class MoviesViewModel @Inject constructor(
                     dislikeMovieUseCase(id)
                 }
             }
+        }
+    }
+
+    fun getLocalMovies() {
+        viewModelScope.launch {
+            // todo need emit
+            getLocalUseCase.invoke()
         }
     }
 
