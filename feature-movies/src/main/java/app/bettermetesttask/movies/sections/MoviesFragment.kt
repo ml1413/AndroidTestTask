@@ -18,7 +18,6 @@ import app.bettermetesttask.featurecommon.utils.views.gone
 import app.bettermetesttask.featurecommon.utils.views.visible
 import app.bettermetesttask.movies.R
 import app.bettermetesttask.movies.databinding.MoviesFragmentBinding
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
@@ -82,11 +81,15 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
                     }
                 }
 
-                else -> {
+                is MoviesState.Error -> {
                     // no op
+                    tvError.text = state.error
+                    tvError.visible()
                     progressBar.gone()
                     rvList.gone()
                 }
+
+                MoviesState.Initial -> {}
             }
         }
     }

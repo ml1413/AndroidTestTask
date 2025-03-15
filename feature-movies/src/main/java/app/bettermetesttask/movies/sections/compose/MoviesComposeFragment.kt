@@ -113,6 +113,8 @@ private fun MoviesComposeScreen(
                     CircularProgressIndicator()
                 }
             }
+
+            is MoviesState.Error -> {}
         }
     }
 }
