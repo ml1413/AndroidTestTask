@@ -82,9 +82,10 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
                 is MoviesState.Loaded -> {
                     progressBar.gone()
                     rvList.visible()
-                    val list = state.movies
-                    rvList.adapter = adapter
-                    adapter.submitList(list)
+                    adapter.apply {
+                        rvList.adapter=this
+                        submitList(state.movies)
+                    }
                 }
 
                 else -> {

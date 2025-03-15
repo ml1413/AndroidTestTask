@@ -11,11 +11,9 @@ import javax.inject.Inject
 
 class MoviesRepositoryImpl @Inject constructor(
     private val localStore: MoviesLocalStore,
-    private val mapper: MoviesMapper
+    private val mapper: MoviesMapper,
+    private val restStore: MoviesRestStore
 ) : MoviesRepository {
-    // todo need inject
-    private val restStore = MoviesRestStore()
-
     override suspend fun getMovies(): Result<List<Movie>> {
         return Result.of { restStore.getMovies() }
     }
