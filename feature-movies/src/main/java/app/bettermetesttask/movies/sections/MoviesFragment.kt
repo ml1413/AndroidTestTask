@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import app.bettermetesttask.domainmovies.entries.Arg
 import app.bettermetesttask.featurecommon.injection.utils.Injectable
@@ -17,6 +19,7 @@ import app.bettermetesttask.featurecommon.utils.views.visible
 import app.bettermetesttask.movies.R
 import app.bettermetesttask.movies.databinding.MoviesFragmentBinding
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -36,7 +39,6 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
         )
     }
 
-    private var job: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +51,11 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.moviesStateFlow.collect(::renderMoviesState)
+            }
+        }
         adapter.onItemClicked = { movie ->
             Arg.movie = movie
             findNavController().navigate(R.id.action_moviesFragment_to_detailsFragment)
@@ -59,23 +65,7 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        viewModel.loadMovies()
-        //todo refactor scope
-        job = lifecycleScope.launchWhenCreated {
-            viewModel.moviesStateFlow.collect(::renderMoviesState)
-        }
-    }
-
-    override fun onDestroyView() {
-        job?.cancel()
-        super.onDestroyView()
-    }
-
     private fun renderMoviesState(state: MoviesState) {
-        //todo fix visible progressbar
         with(binding) {
             when (state) {
                 MoviesState.Loading -> {
