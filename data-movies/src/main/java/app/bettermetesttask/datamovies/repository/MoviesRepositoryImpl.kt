@@ -13,11 +13,11 @@ class MoviesRepositoryImpl @Inject constructor(
     private val localStore: MoviesLocalStore,
     private val mapper: MoviesMapper
 ) : MoviesRepository {
-
+    // todo need inject
     private val restStore = MoviesRestStore()
 
     override suspend fun getMovies(): Result<List<Movie>> {
-        TODO("Not yet implemented")
+        return Result.of { restStore.getMovies() }
     }
 
     override suspend fun getMovie(id: Int): Result<Movie> {

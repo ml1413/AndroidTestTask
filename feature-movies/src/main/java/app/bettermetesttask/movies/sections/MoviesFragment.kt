@@ -27,11 +27,19 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
 
     private lateinit var binding: MoviesFragmentBinding
 
-    private val viewModel by viewModels<MoviesViewModel> { SimpleViewModelProviderFactory(viewModelProvider) }
+    private val viewModel by viewModels<MoviesViewModel> {
+        SimpleViewModelProviderFactory(
+            viewModelProvider
+        )
+    }
 
     private var job: Job? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = MoviesFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -52,7 +60,7 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
         super.onResume()
 
         viewModel.loadMovies()
-
+        //todo refactor scope
         job = lifecycleScope.launchWhenCreated {
             viewModel.moviesStateFlow.collect(::renderMoviesState)
         }
@@ -70,10 +78,15 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
                     rvList.gone()
                     progressBar.visible()
                 }
+
                 is MoviesState.Loaded -> {
                     progressBar.gone()
                     rvList.visible()
+                    val list = state.movies
+                    rvList.adapter = adapter
+                    adapter.submitList(list)
                 }
+
                 else -> {
                     // no op
                     progressBar.gone()

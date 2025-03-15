@@ -15,6 +15,7 @@
         android:fontFamily="@font/roboto_mono"
         android:gravity="center"
         android:text="@string/movies_title"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:textColor="@color/sandy_orange"
         android:textSize="24sp"
         android:visibility="gone"
