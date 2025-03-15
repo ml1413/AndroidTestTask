@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import app.bettermetesttask.domainmovies.entries.Arg
 import app.bettermetesttask.featurecommon.injection.utils.Injectable
 import app.bettermetesttask.featurecommon.injection.viewmodel.SimpleViewModelProviderFactory
 import app.bettermetesttask.featurecommon.utils.views.gone
@@ -49,9 +51,9 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
         super.onViewCreated(view, savedInstanceState)
 
         adapter.onItemClicked = { movie ->
-            viewModel.openMovieDetails(movie)
+            Arg.movie = movie
+            findNavController().navigate(R.id.action_moviesFragment_to_detailsFragment)
         }
-
         adapter.onItemLiked = { movie ->
             viewModel.likeMovie(movie)
         }
@@ -85,7 +87,7 @@ class MoviesFragment : Fragment(R.layout.movies_fragment), Injectable {
                     progressBar.gone()
                     rvList.visible()
                     adapter.apply {
-                        rvList.adapter=this
+                        rvList.adapter = this
                         submitList(state.movies)
                     }
                 }
